@@ -15,7 +15,7 @@ require.config({
 
         // views
         'ticTacToe'     :   'views/ticTacToe',
-        'square'        :   'views/square',
+        'view_square'   :   'views/view_square',
 
         // models
         'square'        :   'models/square',
