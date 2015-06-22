@@ -8,10 +8,10 @@ require.config({
         'jquery'        :   'libs/jquery-1.9.1.min',
 
         // templating library
-        'underscore'    :   'libs/underscore',
+        'underscore'    :   'libs/underscore-min',
         
         // backbone
-        'backbone'      :   'libs/backbone',
+        'backbone'      :   'libs/backbone-min',
 
         // views
         'ticTacToe'     :   'views/ticTacToe',
@@ -38,6 +38,8 @@ require.config({
     }
 });
 
-require(['jquery'], function($){
-    $('#container')
+require(['jquery', 'ticTacToe'], function($, TicTacToe){
+    var game = new TicTacToe({
+        el : $('#container1')
+    });
 });
