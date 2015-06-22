@@ -3,6 +3,11 @@
  */
 define(['jquery', 'backbone', 'squares'], function($, Backbone, Squares) {  
     return Backbone.View.extend({
+        tmpl: '<article class="tic-tac-toe">' +
+                '<section class="board"></section>' +
+                '<section class="controls"></section>' +
+              '</article>',
+
         initialize: function(options) {
             
             var size = options.size || 3;
@@ -22,7 +27,7 @@ define(['jquery', 'backbone', 'squares'], function($, Backbone, Squares) {
             this.squares.add(sqData);
         },
         render: function() {
-            this.$el.append('div')
+            this.$el.append(this.tmpl)
         }
     });
 })
