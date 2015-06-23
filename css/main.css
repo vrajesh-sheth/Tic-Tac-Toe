@@ -21,7 +21,7 @@
     text-align: center;
 }
 
-.square.filled {
+.filled {
     pointer-events: none;
 }
 

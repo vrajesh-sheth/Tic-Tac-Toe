@@ -16,19 +16,19 @@ define(['jquery', 'backbone', 'squares', 'view_square'], function($, Backbone, S
         },
 
         initialize: function(options) {  
-            var size = options.size || 3;
+            this.size = options.size || 3;
             this.initializePlayer();
-            this.initializeModelsAndCollection(size);
-            this.render(size);
+            this.initializeModelsAndCollection();
+            this.render();
         },
 
         initializePlayer: function() {
             this.togglePlayer();
         },
 
-        initializeModelsAndCollection: function(size) {
+        initializeModelsAndCollection: function() {
             this.squares = new Squares();
-            var noOfSquares = size * size,
+            var noOfSquares = this.size * this.size,
                 sqData = [];
             for (var i = 0; i < noOfSquares; i++) {
                 sqData.push({
@@ -38,7 +38,7 @@ define(['jquery', 'backbone', 'squares', 'view_square'], function($, Backbone, S
             }
             this.squares.add(sqData);
         },
-        render: function(size) {
+        render: function() {
             this.$el.append(this.tmpl);
             this.$currentPlayer = this.$('.current-player');
 
@@ -50,11 +50,11 @@ define(['jquery', 'backbone', 'squares', 'view_square'], function($, Backbone, S
                 });
                 this.squareViews.push(view);
 
-                var isNewRow = i % size === 0,
+                var isNewRow = i % this.size === 0,
                     $row = rows[rowIndex];
                 
                 if (isNewRow) {
-                    if(Math.floor(i / size) > 0) {
+                    if(Math.floor(i / this.size) > 0) {
                         rowIndex++;
                     }
                     // For every nth square, add a new row to the board
@@ -86,8 +86,30 @@ define(['jquery', 'backbone', 'squares', 'view_square'], function($, Backbone, S
 
             sqModel.play(this.player);
 
-            this.togglePlayer();
-            this.renderCurrentPlayer()
+            var isGameOver = this.checkGameResult();
+
+            if (!isGameOver) {
+                this.togglePlayer();
+                this.renderCurrentPlayer();
+            } else {
+                this.$el.addClass('filled');
+            }          
+        },
+
+        checkGameResult: function() {
+            var result = this.squares.isThereAVictory(this.player, this.size);
+            if (result) {
+                result = 'Player ' + this.player + ' wins!'
+            } else if (!result && this.squares.isGameCompleted()) {
+                result = 'Draw';
+            } 
+            
+            if (result) {
+                this.$('.result').html(result);
+                return true;
+            }
+
+            return false;             
         },
 
         togglePlayer: function() {
