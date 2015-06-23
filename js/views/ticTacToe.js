@@ -37,6 +37,9 @@ define(['jquery', 'backbone', 'squares', 'view_square'], function($, Backbone, S
                 });
             }
             this.squares.add(sqData);
+            
+            // Store references to primary diagonals
+            this.squares.storeReferences(this.size);
         },
         render: function() {
             this.$el.append(this.tmpl);
@@ -77,16 +80,16 @@ define(['jquery', 'backbone', 'squares', 'view_square'], function($, Backbone, S
         playMove: function(e) {
             var $target = $(e.target),
                 row_id = $target.data('row-id'),
-                col_id = $target.data('column-id');
+                column_id = $target.data('column-id');
 
             var sqModel = this.squares.findWhere({
-                row_id : $target.data('row-id'),
-                column_id : $target.data('column-id')
+                row_id : row_id,
+                column_id : column_id
             });
 
             sqModel.play(this.player);
 
-            var isGameOver = this.checkGameResult();
+            var isGameOver = this.checkGameResult(row_id, column_id);
 
             if (!isGameOver) {
                 this.togglePlayer();
@@ -96,8 +99,8 @@ define(['jquery', 'backbone', 'squares', 'view_square'], function($, Backbone, S
             }          
         },
 
-        checkGameResult: function() {
-            var result = this.squares.isThereAVictory(this.player, this.size);
+        checkGameResult: function(row_id, column_id) {
+            var result = this.squares.isThereAVictory(this.player, this.size, row_id, column_id);
             if (result) {
                 result = 'Player ' + this.player + ' wins!'
             } else if (!result && this.squares.isGameCompleted()) {
