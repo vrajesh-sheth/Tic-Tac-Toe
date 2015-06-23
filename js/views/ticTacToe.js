@@ -5,10 +5,10 @@ define(['jquery', 'backbone', 'squares', 'view_square'], function($, Backbone, S
     return Backbone.View.extend({
         tmpl: '<article class="tic-tac-toe">' +
                 '<section class="board"></section>' +
-                '<section class="controls">
-                    <div class="player"></div>
-                    <div class="result"></div>
-                </section>' +
+                '<section class="controls">' +
+                    '<div class="current-player"></div>' +
+                    '<div class="result"></div>' +
+                '</section>' +
             '</article>',
 
         events: {
@@ -19,7 +19,7 @@ define(['jquery', 'backbone', 'squares', 'view_square'], function($, Backbone, S
             var size = options.size || 3;
             this.initializePlayer();
             this.initializeModelsAndCollection(size);
-            this.render();
+            this.render(size);
         },
 
         initializePlayer: function() {
@@ -30,29 +30,48 @@ define(['jquery', 'backbone', 'squares', 'view_square'], function($, Backbone, S
             this.squares = new Squares();
             var noOfSquares = size * size,
                 sqData = [];
-            for (var i = 0; i < size; i++) {
+            for (var i = 0; i < noOfSquares; i++) {
                 sqData.push({
-                    row_id : i / 3,
+                    row_id : Math.floor(i / 3),
                     column_id : i % 3
                 });
             }
             this.squares.add(sqData);
         },
-        render: function() {
+        render: function(size) {
             this.$el.append(this.tmpl);
+            this.$currentPlayer = this.$('.current-player');
 
             this.squareViews = [];
-            var subViews = [];
-            this.squares.each(function(sq){
+            var rows = [], rowIndex = 0;
+            this.squares.each(function(sq, i){
                 var view = new ViewSquare({
                     model: sq
                 });
                 this.squareViews.push(view);
-                subViews.push(view.el)
+
+                var isNewRow = i % size === 0,
+                    $row = rows[rowIndex];
+                
+                if (isNewRow) {
+                    if(Math.floor(i / size) > 0) {
+                        rowIndex++;
+                    }
+                    // For every nth square, add a new row to the board
+                    $row = $('<div class="row"></div>');
+                    rows[rowIndex] = $row;
+                }
+                // Append the view to the correct row
+                $row.append(view.el)
             }, this);
 
-            this.$('.board').append(subViews)
+            this.$('.board').append(rows)
 
+            this.renderCurrentPlayer();
+        },
+
+        renderCurrentPlayer: function() {
+            this.$currentPlayer.html('Player: ' + this.player);
         },
 
         playMove: function(e) {
@@ -66,7 +85,9 @@ define(['jquery', 'backbone', 'squares', 'view_square'], function($, Backbone, S
             });
 
             sqModel.play(this.player);
-            
+
+            this.togglePlayer();
+            this.renderCurrentPlayer()
         },
 
         togglePlayer: function() {

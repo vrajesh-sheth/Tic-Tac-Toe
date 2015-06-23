@@ -4,6 +4,7 @@ define(['jquery', 'backbone'], function($, Backbone){
             this.model.on('change:value', this.renderSelection, this);
             this.render()
         },
+        className: 'square-wrapper',
 
         template: _.template('<div class="square" data-row-id=<%=row_id %> data-column-id="<%=column_id %>"><%=value%></div>'),
 
@@ -12,11 +13,10 @@ define(['jquery', 'backbone'], function($, Backbone){
             this.$value = this.$('.square');
         },
 
-        renderSelection: function(value) {
-            if (value !== '0' || value !== 'x') {
-                value = '';
-            }
+        renderSelection: function(model, value) {
+            
             this.$value.append(value);
+            this.$value.addClass('filled')
         }
     }) 
 });

@@ -8,6 +8,9 @@ define(['jquery', 'backbone'], function($, Backbone) {
             column_id : null,
             value : ''
         },
-        initialize: function(){}
+        initialize: function(){},
+        play: function(player){
+            this.set('value', player)
+        }
     });
 })
